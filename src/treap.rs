@@ -28,6 +28,32 @@ impl<K: Ord + Debug> Treap<K> {
     }
   }
 
+  fn rotate_right(tree: &mut Box<Node<K>>) {
+    let lnode = tree.lchild.as_mut().unwrap();
+    let llnode = lnode.lchild.take();
+    let lrnode = lnode.rchild.take();
+    let mut rnode = replace(&mut tree.lchild, llnode);
+    swap(
+      &mut tree.as_mut().key,
+      &mut rnode.as_deref_mut().unwrap().key,
+    );
+    rnode.as_deref_mut().unwrap().lchild = lrnode;
+    rnode.as_deref_mut().unwrap().rchild = tree.rchild.take();
+    tree.rchild = rnode;
+  }
+
+  fn rotate_left(tree: &mut Box<Node<K>>) {
+    let rnode = tree.rchild.as_mut().unwrap();
+    let rlnode = rnode.lchild.take();
+    let rrnode = rnode.rchild.take();
+    let mut lnode = replace(&mut tree.rchild, rrnode);
+    swap(
+      &mut tree.as_mut().key,
+      &mut lnode.as_deref_mut().unwrap().key,
+    );
+    lnode.as_deref_mut().unwrap().lchild = tree.lchild.take();
+    lnode.as_deref_mut().unwrap().rchild = rlnode;
+    tree.lchild = lnode;
   }
 
   fn _insert(item: Box<Node<K>>, tree: &mut Option<Box<Node<K>>>) {
@@ -38,8 +64,14 @@ impl<K: Ord + Debug> Treap<K> {
       Some(t) => {
         if item.key < t.key {
           Treap::_insert(item, &mut t.lchild);
+          if t.lchild.as_deref().unwrap().priority > t.priority {
+            Treap::rotate_right(t);
+          }
         } else if item.key > t.key {
           Treap::_insert(item, &mut t.rchild);
+          if t.rchild.as_deref().unwrap().priority > t.priority {
+            Treap::rotate_left(t);
+          }
         }
       }
     }
@@ -112,5 +144,33 @@ mod tests {
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
   }
 
+  #[test]
+  fn test_rotate() {
+    let mut tree: Treap<u64> = Treap::new();
+    tree.insert(10 as u64);
+    assert_str_eq!(tree.print(), "[10()()]");
+    tree.insert(50 as u64);
+    assert_str_eq!(tree.print(), "[10()([50()()])]");
+    tree.insert(5 as u64);
+    assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
+    tree.insert(100 as u64);
+    assert_str_eq!(tree.print(), "[10([5()()])([50()([100()()])])]");
+    tree.insert(200 as u64);
+    assert_str_eq!(tree.print(), "[10([5()()])([50()([200([100()()])()])])]");
+    tree.insert(400 as u64);
+    assert_str_eq!(
+      tree.print(),
+      "[10([5()()])([50()([400([200([100()()])()])()])])]"
+    );
+    tree.insert(300 as u64);
+    assert_str_eq!(
+      tree.print(),
+      "[10([5()()])([50()([200([100()()])([400([300()()])()])])])]"
+    );
+    tree.insert(35 as u64);
+    assert_str_eq!(
+      tree.print(),
+      "[10([5()()])([35()([50()([200([100()()])([400([300()()])()])])])])]"
+    );
   }
 }
