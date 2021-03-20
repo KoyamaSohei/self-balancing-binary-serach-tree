@@ -72,4 +72,20 @@ mod tests {
       assert_eq!(r.as_deref().unwrap().key, 50 as u64);
     }
   }
+  #[test]
+  fn test_insert_3() {
+    let mut tree: Treap<u64> = Treap::new();
+    tree.insert(10 as u64);
+    assert_eq!(tree.root.as_deref().unwrap().key, 10 as u64);
+    tree.insert(50 as u64);
+    {
+      let r = tree.root.as_deref().unwrap().rchild.as_ref();
+      assert_eq!(r.as_deref().unwrap().key, 50 as u64);
+    }
+    tree.insert(5 as u64);
+    {
+      let l = tree.root.as_deref().unwrap().lchild.as_ref();
+      assert_eq!(l.as_deref().unwrap().key, 5 as u64);
+    }
+  }
 }
