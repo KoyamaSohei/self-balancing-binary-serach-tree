@@ -57,7 +57,6 @@ mod tests {
   fn test_insert() {
     let mut tree: Treap<u64> = Treap::new();
     tree.insert(10 as u64);
-    let x = tree.root.unwrap();
-    assert_eq!(x.key, 10 as u64);
+    assert_eq!(tree.root.as_deref().unwrap().key, 10 as u64);
   }
 }
