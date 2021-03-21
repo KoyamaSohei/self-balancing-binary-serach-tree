@@ -1,6 +1,6 @@
 pub mod treap;
 
-pub trait BBST<K> {
+pub trait BST<K> {
     fn insert(&mut self, key: K);
 }
 

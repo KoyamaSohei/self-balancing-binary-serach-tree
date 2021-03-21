@@ -4,7 +4,7 @@ use std::mem::{replace, swap};
 
 use rand::Rng;
 
-use super::BBST;
+use super::BST;
 
 // https://faculty.washington.edu/aragon/pubs/rst96.pdf
 // Figure 3
@@ -167,7 +167,7 @@ impl<K: Ord + Debug> Treap<K> {
   }
 }
 
-impl<K: Ord + Debug> BBST<K> for Treap<K> {
+impl<K: Ord + Debug> BST<K> for Treap<K> {
   fn insert(&mut self, key: K) {
     let item: Box<Node<K>> = Box::new(Node {
       key,
@@ -182,7 +182,7 @@ impl<K: Ord + Debug> BBST<K> for Treap<K> {
 #[cfg(test)]
 mod tests {
   use super::Treap;
-  use super::BBST;
+  use super::BST;
   use assert_str::assert_str_eq;
 
   #[test]
