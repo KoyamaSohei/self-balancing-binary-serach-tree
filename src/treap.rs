@@ -97,6 +97,47 @@ impl<K: Ord + Debug> Treap<K> {
       },
     }
   }
+  fn root_delete(tree: &mut Option<Box<Node<K>>>) {
+    match tree {
+      None => {}
+      Some(t) => match &t.lchild {
+        None => match &t.rchild {
+          None => *tree = None,
+          Some(_) => {
+            Treap::rotate_left(t);
+            Treap::root_delete(&mut t.lchild);
+          }
+        },
+        Some(l) => match &t.rchild {
+          None => {
+            Treap::rotate_right(t);
+            Treap::root_delete(&mut t.rchild);
+          }
+          Some(r) => match l.priority.cmp(&r.priority) {
+            Ordering::Equal => {}
+            Ordering::Less => {
+              Treap::rotate_left(t);
+              Treap::root_delete(&mut t.lchild);
+            }
+            Ordering::Greater => {
+              Treap::rotate_right(t);
+              Treap::root_delete(&mut t.rchild);
+            }
+          },
+        },
+      },
+    }
+  }
+  fn _delete(key: &K, tree: &mut Option<Box<Node<K>>>) {
+    match tree {
+      None => {}
+      Some(t) => match key.cmp(&t.key) {
+        Ordering::Less => Treap::_delete(key, &mut t.lchild),
+        Ordering::Greater => Treap::_delete(key, &mut t.rchild),
+        Ordering::Equal => Treap::root_delete(tree),
+      },
+    }
+  }
   #[cfg(test)]
   fn _print(tree: &Box<Node<K>>) -> String {
     let mut message = String::from("[");
@@ -189,6 +230,9 @@ impl<K: Ord + Debug> BST<K> for Treap<K> {
   }
   fn find(&self, key: K) -> bool {
     Treap::_find(&key, &self.root)
+  }
+  fn delete(&mut self, key: K) {
+    Treap::_delete(&key, &mut self.root);
   }
 }
 
@@ -285,6 +329,21 @@ mod tests {
     tree.insert(50);
     assert_eq!(tree.find(0), false);
     assert_eq!(tree.find(10), true);
+    assert_eq!(tree.find(50), true);
+  }
+  #[test]
+  fn test_delete() {
+    let mut tree: Treap<u64> = Treap::new(77);
+    assert_eq!(tree.find(0), false);
+    tree.insert(10);
+    assert_eq!(tree.find(0), false);
+    assert_eq!(tree.find(10), true);
+    tree.delete(10);
+    assert_eq!(tree.find(0), false);
+    assert_eq!(tree.find(10), false);
+    tree.insert(50);
+    assert_eq!(tree.find(0), false);
+    assert_eq!(tree.find(10), false);
     assert_eq!(tree.find(50), true);
   }
 }
