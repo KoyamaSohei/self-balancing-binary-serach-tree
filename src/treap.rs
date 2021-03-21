@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::mem::{replace, swap};
 
@@ -69,19 +70,21 @@ impl<K: Ord + Debug> Treap<K> {
       None => {
         *tree = Some(item);
       }
-      Some(t) => {
-        if item.key < t.key {
+      Some(t) => match item.key.cmp(&t.key) {
+        Ordering::Less => {
           Treap::_insert(item, &mut t.lchild);
           if t.lchild.as_deref().unwrap().priority > t.priority {
             Treap::rotate_right(t);
           }
-        } else if item.key > t.key {
+        }
+        Ordering::Greater => {
           Treap::_insert(item, &mut t.rchild);
           if t.rchild.as_deref().unwrap().priority > t.priority {
             Treap::rotate_left(t);
           }
         }
-      }
+        Ordering::Equal => {}
+      },
     }
   }
   #[cfg(test)]
