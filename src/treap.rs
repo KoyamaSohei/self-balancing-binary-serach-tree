@@ -346,4 +346,38 @@ mod tests {
     assert_eq!(tree.find(10), false);
     assert_eq!(tree.find(50), true);
   }
+  #[test]
+  fn test_delete_2() {
+    let mut tree: Treap<u64> = Treap::new(77);
+    tree.insert(10);
+    tree.insert(50);
+    tree.insert(5);
+    tree.insert(100);
+    tree.insert(200);
+    tree.insert(400);
+    tree.insert(300);
+    tree.insert(35);
+    assert_str_eq!(
+      tree.print(),
+      "[400([10([5()()])([35()([200([50()([100()()])])([300()()])])])])()]"
+    );
+    tree.delete(50);
+    assert_str_eq!(
+      tree.print(),
+      "[400([10([5()()])([35()([200([100()()])([300()()])])])])()]"
+    );
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
+    tree.delete(35);
+    assert_str_eq!(
+      tree.print(),
+      "[400([10([5()()])([200([100()()])([300()()])])])()]"
+    );
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
+    tree.delete(400);
+    assert_str_eq!(tree.print(), "[10([5()()])([200([100()()])([300()()])])]");
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
+  }
 }
