@@ -1,4 +1,4 @@
-balanced-binary-serach-tree
+self-balancing-binary-serach-tree
 ---
 
 # test

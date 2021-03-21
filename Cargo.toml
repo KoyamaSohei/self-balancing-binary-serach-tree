@@ -1,5 +1,5 @@
 [package]
-name = "balanced-binary-search-tree"
+name = "self-balancing-binary-serach-tree"
 version = "0.1.0"
 authors = ["KoyamaSohei <koyamaso0309@gmail.com>"]
 edition = "2018"
