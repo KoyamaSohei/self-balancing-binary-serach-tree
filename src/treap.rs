@@ -22,10 +22,10 @@ pub struct Treap<K: Ord + Debug> {
 }
 
 impl<K: Ord + Debug> Treap<K> {
-  pub fn new() -> Treap<K> {
+  pub fn new(seed: u8) -> Treap<K> {
     Treap {
       root: None,
-      rng: rand::SeedableRng::from_seed([77; 32]),
+      rng: rand::SeedableRng::from_seed([seed; 32]),
     }
   }
 
@@ -200,30 +200,30 @@ mod tests {
 
   #[test]
   fn test_insert() {
-    let mut tree: Treap<u64> = Treap::new();
-    tree.insert(10 as u64);
+    let mut tree: Treap<u64> = Treap::new(77);
+    tree.insert(10);
     assert_str_eq!(tree.print(), "[10()()]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
   }
   #[test]
   fn test_insert_2() {
-    let mut tree: Treap<u64> = Treap::new();
-    tree.insert(10 as u64);
+    let mut tree: Treap<u64> = Treap::new(77);
+    tree.insert(10);
     assert_str_eq!(tree.print(), "[10()()]");
-    tree.insert(50 as u64);
+    tree.insert(50);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
   }
   #[test]
   fn test_insert_3() {
-    let mut tree: Treap<u64> = Treap::new();
-    tree.insert(10 as u64);
+    let mut tree: Treap<u64> = Treap::new(77);
+    tree.insert(10);
     assert_str_eq!(tree.print(), "[10()()]");
-    tree.insert(50 as u64);
+    tree.insert(50);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
-    tree.insert(5 as u64);
+    tree.insert(5);
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
@@ -231,42 +231,42 @@ mod tests {
 
   #[test]
   fn test_rotate() {
-    let mut tree: Treap<u64> = Treap::new();
-    tree.insert(10 as u64);
+    let mut tree: Treap<u64> = Treap::new(77);
+    tree.insert(10);
     assert_str_eq!(tree.print(), "[10()()]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(50 as u64);
+    tree.insert(50);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(5 as u64);
+    tree.insert(5);
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(100 as u64);
+    tree.insert(100);
     assert_str_eq!(tree.print(), "[10([5()()])([50()([100()()])])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(200 as u64);
+    tree.insert(200);
     assert_str_eq!(tree.print(), "[10([5()()])([200([50()([100()()])])()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(400 as u64);
+    tree.insert(400);
     assert_str_eq!(
       tree.print(),
       "[400([10([5()()])([200([50()([100()()])])()])])()]"
     );
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(300 as u64);
+    tree.insert(300);
     assert_str_eq!(
       tree.print(),
       "[400([10([5()()])([200([50()([100()()])])([300()()])])])()]"
     );
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
-    tree.insert(35 as u64);
+    tree.insert(35);
     assert_str_eq!(
       tree.print(),
       "[400([10([5()()])([35()([200([50()([100()()])])([300()()])])])])()]"
@@ -277,7 +277,7 @@ mod tests {
 
   #[test]
   fn test_find() {
-    let mut tree: Treap<u64> = Treap::new();
+    let mut tree: Treap<u64> = Treap::new(77);
     assert_eq!(tree.find(0), false);
     tree.insert(10);
     assert_eq!(tree.find(0), false);
