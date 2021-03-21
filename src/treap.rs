@@ -130,6 +130,38 @@ impl<K: Ord + Debug> Treap<K> {
   pub fn invalid_priority(&self) -> bool {
     Treap::_invalid_priority(self.root.as_ref().unwrap())
   }
+  #[cfg(test)]
+  fn get_seq_in_order(tree: &Box<Node<K>>, seq: &mut Vec<K>)
+  where
+    K: Copy,
+  {
+    match &tree.lchild {
+      None => {}
+      Some(l) => {
+        Treap::get_seq_in_order(l, seq);
+      }
+    }
+    seq.push(tree.key);
+    match &tree.rchild {
+      None => {}
+      Some(r) => {
+        Treap::get_seq_in_order(r, seq);
+      }
+    }
+  }
+  #[cfg(test)]
+  pub fn invalid_key(&self) -> bool
+  where
+    K: Copy,
+  {
+    let mut seq: Vec<K> = Vec::new();
+    Treap::get_seq_in_order(self.root.as_ref().unwrap(), &mut seq);
+    let mut ng = false;
+    for i in 1..seq.len() - 1 {
+      ng |= seq[i] >= seq[i + 1];
+    }
+    ng
+  }
 }
 
 impl<K: Ord + Debug> BBST<K> for Treap<K> {
@@ -156,6 +188,7 @@ mod tests {
     tree.insert(10 as u64);
     assert_str_eq!(tree.print(), "[10()()]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
   }
   #[test]
   fn test_insert_2() {
@@ -165,6 +198,7 @@ mod tests {
     tree.insert(50 as u64);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
   }
   #[test]
   fn test_insert_3() {
@@ -176,6 +210,7 @@ mod tests {
     tree.insert(5 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
   }
 
   #[test]
@@ -184,35 +219,43 @@ mod tests {
     tree.insert(10 as u64);
     assert_str_eq!(tree.print(), "[10()()]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(50 as u64);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(5 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(100 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([50()([100()()])])]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(200 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([200([50()([100()()])])()])]");
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(400 as u64);
     assert_str_eq!(
       tree.print(),
       "[400([10([5()()])([200([50()([100()()])])()])])()]"
     );
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(300 as u64);
     assert_str_eq!(
       tree.print(),
       "[400([10([5()()])([200([50()([100()()])])([300()()])])])()]"
     );
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
     tree.insert(35 as u64);
     assert_str_eq!(
       tree.print(),
       "[400([10([5()()])([35()([200([50()([100()()])])([300()()])])])])()]"
     );
     assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
   }
 }
