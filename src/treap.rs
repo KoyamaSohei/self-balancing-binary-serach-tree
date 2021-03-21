@@ -271,6 +271,14 @@ mod tests {
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
+    tree.insert(5);
+    assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
+    tree.insert(10);
+    assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
   }
 
   #[test]
@@ -377,6 +385,14 @@ mod tests {
     assert_eq!(tree.invalid_key(), false);
     tree.delete(400);
     assert_str_eq!(tree.print(), "[10([5()()])([200([100()()])([300()()])])]");
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
+    tree.delete(200);
+    assert_str_eq!(tree.print(), "[10([5()()])([300([100()()])()])]");
+    assert_eq!(tree.invalid_priority(), false);
+    assert_eq!(tree.invalid_key(), false);
+    tree.delete(10);
+    assert_str_eq!(tree.print(), "[5()([300([100()()])()])]");
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
   }
