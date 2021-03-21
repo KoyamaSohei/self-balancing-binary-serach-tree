@@ -87,6 +87,16 @@ impl<K: Ord + Debug> Treap<K> {
       },
     }
   }
+  fn _find(key: &K, tree: &Option<Box<Node<K>>>) -> bool {
+    match tree {
+      None => false,
+      Some(t) => match key.cmp(&t.key) {
+        Ordering::Less => Treap::_find(key, &t.lchild),
+        Ordering::Greater => Treap::_find(key, &t.rchild),
+        Ordering::Equal => true,
+      },
+    }
+  }
   #[cfg(test)]
   fn _print(tree: &Box<Node<K>>) -> String {
     let mut message = String::from("[");
@@ -177,6 +187,9 @@ impl<K: Ord + Debug> BST<K> for Treap<K> {
     });
     Treap::_insert(item, &mut self.root);
   }
+  fn find(&self, key: K) -> bool {
+    Treap::_find(&key, &self.root)
+  }
 }
 
 #[cfg(test)]
@@ -260,5 +273,18 @@ mod tests {
     );
     assert_eq!(tree.invalid_priority(), false);
     assert_eq!(tree.invalid_key(), false);
+  }
+
+  #[test]
+  fn test_find() {
+    let mut tree: Treap<u64> = Treap::new();
+    assert_eq!(tree.find(0), false);
+    tree.insert(10);
+    assert_eq!(tree.find(0), false);
+    assert_eq!(tree.find(10), true);
+    tree.insert(50);
+    assert_eq!(tree.find(0), false);
+    assert_eq!(tree.find(10), true);
+    assert_eq!(tree.find(50), true);
   }
 }
