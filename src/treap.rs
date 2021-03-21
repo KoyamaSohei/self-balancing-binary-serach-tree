@@ -37,6 +37,10 @@ impl<K: Ord + Debug> Treap<K> {
       &mut tree.as_mut().key,
       &mut rnode.as_deref_mut().unwrap().key,
     );
+    swap(
+      &mut tree.as_mut().priority,
+      &mut rnode.as_deref_mut().unwrap().priority,
+    );
     rnode.as_deref_mut().unwrap().lchild = lrnode;
     rnode.as_deref_mut().unwrap().rchild = tree.rchild.take();
     tree.rchild = rnode;
@@ -50,6 +54,10 @@ impl<K: Ord + Debug> Treap<K> {
     swap(
       &mut tree.as_mut().key,
       &mut lnode.as_deref_mut().unwrap().key,
+    );
+    swap(
+      &mut tree.as_mut().priority,
+      &mut lnode.as_deref_mut().unwrap().priority,
     );
     lnode.as_deref_mut().unwrap().lchild = tree.lchild.take();
     lnode.as_deref_mut().unwrap().rchild = rlnode;
@@ -99,6 +107,29 @@ impl<K: Ord + Debug> Treap<K> {
   pub fn print(&self) -> String {
     Treap::_print(self.root.as_ref().unwrap())
   }
+  #[cfg(test)]
+  fn _invalid_priority(tree: &Box<Node<K>>) -> bool {
+    let mut ng = false;
+    match &tree.lchild {
+      None => {}
+      Some(l) => {
+        ng |= l.priority > tree.priority;
+        ng |= Treap::_invalid_priority(l);
+      }
+    }
+    match &tree.rchild {
+      None => {}
+      Some(r) => {
+        ng |= r.priority > tree.priority;
+        ng |= Treap::_invalid_priority(r);
+      }
+    }
+    ng
+  }
+  #[cfg(test)]
+  pub fn invalid_priority(&self) -> bool {
+    Treap::_invalid_priority(self.root.as_ref().unwrap())
+  }
 }
 
 impl<K: Ord + Debug> BBST<K> for Treap<K> {
@@ -124,6 +155,7 @@ mod tests {
     let mut tree: Treap<u64> = Treap::new();
     tree.insert(10 as u64);
     assert_str_eq!(tree.print(), "[10()()]");
+    assert_eq!(tree.invalid_priority(), false);
   }
   #[test]
   fn test_insert_2() {
@@ -132,6 +164,7 @@ mod tests {
     assert_str_eq!(tree.print(), "[10()()]");
     tree.insert(50 as u64);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
+    assert_eq!(tree.invalid_priority(), false);
   }
   #[test]
   fn test_insert_3() {
@@ -142,6 +175,7 @@ mod tests {
     assert_str_eq!(tree.print(), "[10()([50()()])]");
     tree.insert(5 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
+    assert_eq!(tree.invalid_priority(), false);
   }
 
   #[test]
@@ -149,28 +183,36 @@ mod tests {
     let mut tree: Treap<u64> = Treap::new();
     tree.insert(10 as u64);
     assert_str_eq!(tree.print(), "[10()()]");
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(50 as u64);
     assert_str_eq!(tree.print(), "[10()([50()()])]");
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(5 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([50()()])]");
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(100 as u64);
     assert_str_eq!(tree.print(), "[10([5()()])([50()([100()()])])]");
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(200 as u64);
-    assert_str_eq!(tree.print(), "[10([5()()])([50()([200([100()()])()])])]");
+    assert_str_eq!(tree.print(), "[10([5()()])([200([50()([100()()])])()])]");
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(400 as u64);
     assert_str_eq!(
       tree.print(),
-      "[10([5()()])([50()([400([200([100()()])()])()])])]"
+      "[400([10([5()()])([200([50()([100()()])])()])])()]"
     );
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(300 as u64);
     assert_str_eq!(
       tree.print(),
-      "[10([5()()])([50()([200([100()()])([400([300()()])()])])])]"
+      "[400([10([5()()])([200([50()([100()()])])([300()()])])])()]"
     );
+    assert_eq!(tree.invalid_priority(), false);
     tree.insert(35 as u64);
     assert_str_eq!(
       tree.print(),
-      "[10([5()()])([35()([50()([200([100()()])([400([300()()])()])])])])]"
+      "[400([10([5()()])([35()([200([50()([100()()])])([300()()])])])])()]"
     );
+    assert_eq!(tree.invalid_priority(), false);
   }
 }
