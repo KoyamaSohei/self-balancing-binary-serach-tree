@@ -5,9 +5,6 @@ use std::mem::{replace, swap};
 use rand::Rng;
 
 use super::BST;
-
-// https://faculty.washington.edu/aragon/pubs/rst96.pdf
-// Figure 3
 #[derive(Debug)]
 struct Node<K: Ord> {
   key: K,
