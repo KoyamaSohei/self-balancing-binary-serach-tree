@@ -225,7 +225,7 @@ impl<K: Ord + Debug> BST<K> for Treap<K> {
     });
     Treap::_insert(item, &mut self.root);
   }
-  fn find(&self, key: K) -> bool {
+  fn find(&mut self, key: K) -> bool {
     Treap::_find(&key, &self.root)
   }
   fn delete(&mut self, key: K) {
