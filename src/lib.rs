@@ -1,3 +1,4 @@
+pub mod splay;
 pub mod treap;
 
 pub trait BST<K> {
