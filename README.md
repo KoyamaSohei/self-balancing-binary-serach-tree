@@ -1,6 +1,8 @@
 self-balancing-binary-serach-tree
 ---
 
+Rust implementation of some self-balancing binary search trees.
+
 # test
 
 ```
