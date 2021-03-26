@@ -11,3 +11,6 @@ $ cargo test
 
 [src/treap.rs](./src/treap.rs)
 
+# Splay
+
+[src/splay.rs](./src/splay.rs)
